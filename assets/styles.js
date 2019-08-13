@@ -1,6 +1,6 @@
 import { StyleSheet, Platform } from 'react-native';
+import { MAIN_BLUE, MAIN_BLACK } from './colorScheme';
 
-const MAIN_COLOR = '#3178d6';
 const styles = StyleSheet.create({
 	// Draw screen styles
 	drawContainer: {
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 	},
 	drawBackground: {
 		flex: 1,
-		backgroundColor: '#323232',
+		backgroundColor: MAIN_BLACK,
 		paddingTop: Platform.OS === 'android' ? 25 : 0
 	},
 	point: {
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 		width: 50,
 		height: 50,
 		borderRadius: 25,
-		backgroundColor: MAIN_COLOR
+		backgroundColor: MAIN_BLUE
 	},
 	// Global styles
 	extend: {
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		// color: 'white'
-		color: MAIN_COLOR
+		color: MAIN_BLUE
 	}
 });
 export default styles;

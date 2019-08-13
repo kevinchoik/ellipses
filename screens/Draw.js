@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 import styles from '../assets/styles';
 import { SCREENS } from '../constants';
+import { MAIN_BLUE } from '../assets/colorScheme';
 
 class Draw extends Component {
 	constructor(props) {
@@ -135,7 +136,7 @@ class Draw extends Component {
 							<Icon
 								name="chevron-right"
 								type="font-awesome"
-								color="#3178d6"
+								color={MAIN_BLUE}
 								size={20}
 							/>
 						</TouchableOpacity>
