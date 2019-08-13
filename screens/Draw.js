@@ -129,7 +129,12 @@ class Draw extends Component {
 						<Text style={[styles.text, styles.timerText]}>
 							{this.state.timer}
 						</Text>
-						<TouchableOpacity style={styles.headerLink}>
+						<TouchableOpacity
+							style={styles.headerLink}
+							onPress={() =>
+								this.props.navigation.navigate(SCREENS.LIST)
+							}
+						>
 							<Text style={[styles.text, styles.headerText]}>
 								View all
 							</Text>
@@ -157,9 +162,5 @@ class Draw extends Component {
 		);
 	}
 }
-
-Draw.navigationOptions = {
-	header: null
-};
 
 export default Draw;
