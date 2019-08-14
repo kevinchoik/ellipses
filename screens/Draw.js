@@ -12,7 +12,7 @@ import styles from '../assets/styles';
 import { SCREENS } from '../constants';
 import { MAIN_BLUE } from '../assets/colorScheme';
 
-class Draw extends Component {
+export default class Draw extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -28,7 +28,6 @@ class Draw extends Component {
 		if (!this.interval) {
 			this.interval = setInterval(() => {
 				if (this.state.timer === 1) {
-					// When time runs out, go to list screen
 					clearInterval(this.interval);
 					// Save the new recording
 					const record = {
@@ -51,18 +50,29 @@ class Draw extends Component {
 								JSON.stringify(recordList)
 							);
 						})
-						// Navigate to list screen
-						.then(() =>
-							this.props.navigation.navigate(SCREENS.LIST)
-						)
+						// Reset values and navigate to list screen
+						.then(() => {
+							this.setState({
+								points: [],
+								record: [],
+								startTime: 0,
+								timer: 5
+							});
+							this.interval = null;
+							this.props.navigation.navigate(SCREENS.LIST);
+						})
 						.catch(err => console.log(err));
 				} else {
 					// Update timer
-					this.setState({ timer: this.state.timer - 1 });
+					this.setState({
+						timer: this.state.timer - 1
+					});
 				}
 			}, 1000);
 			// Set start time for recording
-			this.setState({ startTime: event.nativeEvent.timestamp });
+			this.setState({
+				startTime: event.nativeEvent.timestamp
+			});
 		}
 		// Track the initial input as well
 		this.trackRecord(event);
@@ -116,6 +126,21 @@ class Draw extends Component {
 		);
 	};
 
+	// Reset values and navigate to list screen
+	stopRecord = () => {
+		if (this.interval) {
+			clearInterval(this.interval);
+			this.setState({
+				points: [],
+				record: [],
+				startTime: 0,
+				timer: 5
+			});
+			this.interval = null;
+		}
+		this.props.navigation.navigate(SCREENS.LIST);
+	};
+
 	render() {
 		return (
 			<View
@@ -125,42 +150,40 @@ class Draw extends Component {
 				onResponderMove={this.trackRecord}
 			>
 				<SafeAreaView style={styles.drawBackground}>
-					<View style={styles.drawHeader}>
-						<Text style={[styles.text, styles.timerText]}>
+					{this.state.points.map((point, index) => (
+						<Animated.View
+							key={index}
+							style={{
+								...styles.point,
+								left: point.posX - 25,
+								top: point.posY - 25,
+								opacity: point.opacity
+							}}
+						/>
+					))}
+					<View style={styles.header}>
+						<Text style={[styles.text, styles.headerTitle]}>
 							{this.state.timer}
 						</Text>
 						<TouchableOpacity
-							style={styles.headerLink}
-							onPress={() =>
-								this.props.navigation.navigate(SCREENS.LIST)
-							}
+							style={[styles.headerLink, styles.linkRight]}
+							onPress={this.stopRecord}
 						>
-							<Text style={[styles.text, styles.headerText]}>
+							<Text style={[styles.text, styles.headerBtn]}>
 								View all
 							</Text>
-							<Icon
-								name="chevron-right"
-								type="font-awesome"
-								color={MAIN_BLUE}
-								size={20}
-							/>
+							<View style={styles.btnRight}>
+								<Icon
+									name="chevron-right"
+									type="font-awesome"
+									color={MAIN_BLUE}
+									size={20}
+								/>
+							</View>
 						</TouchableOpacity>
 					</View>
 				</SafeAreaView>
-				{this.state.points.map((point, index) => (
-					<Animated.View
-						key={index}
-						style={{
-							...styles.point,
-							left: point.posX - 25,
-							top: point.posY - 25,
-							opacity: point.opacity
-						}}
-					/>
-				))}
 			</View>
 		);
 	}
 }
-
-export default Draw;
