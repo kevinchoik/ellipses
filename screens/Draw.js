@@ -117,7 +117,7 @@ export default class Draw extends Component {
 				record
 			},
 			() => {
-				// Animate the new point to fade in one second
+				// Animate fade and spread for one second
 				Animated.parallel([
 					Animated.timing(
 						this.state.points[this.state.points.length - 1].opacity,
