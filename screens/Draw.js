@@ -19,6 +19,7 @@ export default class Draw extends Component {
 			points: [],
 			record: [],
 			startTime: 0,
+			startDate: null,
 			timer: 5
 		};
 		this.interval = null;
@@ -32,7 +33,7 @@ export default class Draw extends Component {
 					// Save the new recording
 					const record = {
 						record: this.state.record,
-						time: this.state.startTime
+						time: this.state.startDate
 					};
 					AsyncStorage.getItem('record')
 						.then(recordList => {
@@ -44,7 +45,6 @@ export default class Draw extends Component {
 							}
 							// Add new recording and save
 							recordList.push(record);
-							console.log(recordList);
 							return AsyncStorage.setItem(
 								'record',
 								JSON.stringify(recordList)
@@ -56,6 +56,7 @@ export default class Draw extends Component {
 								points: [],
 								record: [],
 								startTime: 0,
+								startDate: null,
 								timer: 5
 							});
 							this.interval = null;
@@ -69,9 +70,10 @@ export default class Draw extends Component {
 					});
 				}
 			}, 1000);
-			// Set start time for recording
+			// Set start time and date for recording
 			this.setState({
-				startTime: event.nativeEvent.timestamp
+				startTime: event.nativeEvent.timestamp,
+				startDate: new Date().getTime()
 			});
 		}
 		// Track the initial input as well
@@ -134,6 +136,7 @@ export default class Draw extends Component {
 				points: [],
 				record: [],
 				startTime: 0,
+				startDate: null,
 				timer: 5
 			});
 			this.interval = null;
