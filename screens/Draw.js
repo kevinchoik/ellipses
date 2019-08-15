@@ -97,7 +97,8 @@ export default class Draw extends Component {
 		points.push({
 			posX,
 			posY,
-			opacity: new Animated.Value(1)
+			opacity: new Animated.Value(1),
+			scale: new Animated.Value(1)
 		});
 		record = [
 			...this.state.record,
@@ -117,13 +118,22 @@ export default class Draw extends Component {
 			},
 			() => {
 				// Animate the new point to fade in one second
-				Animated.timing(
-					this.state.points[this.state.points.length - 1].opacity,
-					{
-						toValue: 0,
-						duration: 1000
-					}
-				).start();
+				Animated.parallel([
+					Animated.timing(
+						this.state.points[this.state.points.length - 1].opacity,
+						{
+							toValue: 0,
+							duration: 1000
+						}
+					),
+					Animated.timing(
+						this.state.points[this.state.points.length - 1].scale,
+						{
+							toValue: 2,
+							duration: 1000
+						}
+					)
+				]).start();
 			}
 		);
 	};
@@ -160,7 +170,11 @@ export default class Draw extends Component {
 								...styles.point,
 								left: point.posX - 25,
 								top: point.posY - 25,
-								opacity: point.opacity
+								opacity: point.opacity,
+								transform: [
+									{ scaleX: point.scale },
+									{ scaleY: point.scale }
+								]
 							}}
 						/>
 					))}
