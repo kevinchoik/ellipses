@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, AsyncStorage } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { Icon } from 'react-native-elements';
@@ -10,23 +10,56 @@ import { MAIN_BLUE } from '../assets/colorScheme';
 export default props => {
 	const [record, setRecord] = useState([]);
 
-	props.navigation.addListener('willFocus', () => {
+	const update = () => {
+		// AsyncStorage.setItem('record', '');
 		AsyncStorage.getItem('record')
 			.then(recordList => {
 				// Get current list of recordings
 				if (recordList) {
-					setRecord(JSON.parse(recordList).reverse());
+					// Parse the record
+					recordList = JSON.parse(recordList);
+					const eventRemove = props.navigation.getParam('remove');
+					const eventTitle = props.navigation.getParam('title');
+					if (eventRemove) {
+						// Remove an event
+						const remIndex =
+							recordList.length -
+							1 -
+							props.navigation.getParam('index');
+						recordList.splice(remIndex, 1);
+					} else if (typeof eventTitle == 'string') {
+						// Edit the title
+						const editIndex =
+							recordList.length -
+							1 -
+							props.navigation.getParam('index');
+						const editEvent = recordList[editIndex];
+						editEvent.title = eventTitle;
+						recordList[editIndex] = editEvent;
+					}
+					// Reverse the array so that most recent appears on top
+					setRecord([...recordList].reverse());
+					// Save changes to persistent storage
+					if (eventRemove || typeof eventTitle == 'string') {
+						return AsyncStorage.setItem(
+							'record',
+							JSON.stringify(recordList)
+						);
+					}
 				}
 			})
 			.catch(err => console.log(err));
-	});
+	};
+
+	const subscription = props.navigation.addListener('willFocus', update);
+	props.navigation.addListener('willBlur', () => subscription.remove());
 
 	const newRecord = () => {
 		props.navigation.navigate(SCREENS.DRAW);
 	};
 
-	const viewRecord = () => {
-		props.navigation.navigate(SCREENS.EVENT);
+	const viewRecord = (item, index) => {
+		props.navigation.navigate(SCREENS.EVENT, { ...item, index });
 	};
 
 	return (
@@ -47,17 +80,13 @@ export default props => {
 					</View>
 					<Text style={[styles.text, styles.headerBtn]}>Add</Text>
 				</TouchableOpacity>
-				{/* <TouchableOpacity style={[styles.headerLink, styles.linkRight]}>
-					<View style={styles.btnRight}>
-						<Text style={[styles.text, styles.headerMore]}>
-							...
-						</Text>
-					</View>
-				</TouchableOpacity> */}
 			</View>
 			<View style={styles.listWrap}>
 				{record.map((item, index) => (
-					<TouchableOpacity key={index} onPress={viewRecord}>
+					<TouchableOpacity
+						key={index}
+						onPress={() => viewRecord(item, index)}
+					>
 						<View
 							style={
 								index % 2 === 0
@@ -66,7 +95,9 @@ export default props => {
 							}
 						>
 							<Text style={styles.text}>
-								{moment(item.time).calendar()}
+								{item.title
+									? item.title
+									: moment(item.time).calendar()}
 							</Text>
 							<Icon
 								name="chevron-right"
@@ -77,9 +108,6 @@ export default props => {
 						</View>
 					</TouchableOpacity>
 				))}
-				{/* <View style={styles.headerDrop}>
-					<Text>Hi</Text>
-				</View> */}
 			</View>
 		</SafeAreaView>
 	);
