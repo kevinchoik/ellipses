@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 	},
 	listWrap: {
 		flex: 1,
-		marginTop: 10
+		marginTop: 15
 	},
 	listItem: {
 		height: 60,
@@ -36,21 +36,35 @@ const styles = StyleSheet.create({
 	evenItem: {
 		backgroundColor: MAIN_GREY
 	},
-	// headerMore: {
-	// 	fontSize: 40,
-	// 	fontWeight: 'bold',
-	// 	marginTop: -20
-	// },
-	// headerDrop: {
-	// 	width: 100,
-	// 	position: 'absolute',
-	// 	top: 0,
-	// 	right: 0,
-	// 	backgroundColor: 'white'
-	// },
-	// dropItem: {
-
-	// },
+	// Settings screen styles
+	settingsWrap: {
+		flex: 1,
+		marginTop: 15,
+		position: 'relative'
+	},
+	settingsItem: {
+		fontSize: 22
+	},
+	pickerStack: {
+		flexDirection: 'row',
+		justifyContent: 'center'
+	},
+	settingsPicker: {
+		width: 100
+	},
+	pickerItem: {
+		height: 120,
+		fontSize: 22
+	},
+	pickerLabelWrap: {
+		justifyContent: 'center'
+	},
+	pickerLabel: {
+		fontSize: 22
+	},
+	pickerHour: {
+		marginRight: 20
+	},
 	// Event screen styles
 	eventBackground: {
 		flex: 1,
@@ -58,7 +72,7 @@ const styles = StyleSheet.create({
 	},
 	eventDate: {
 		marginRight: 10,
-		fontSize: 20
+		fontSize: 18
 	},
 	eventReplayWrap: {
 		flex: 1,
@@ -98,12 +112,12 @@ const styles = StyleSheet.create({
 	},
 	// Header styles
 	header: {
-		height: 30,
+		height: 35,
 		justifyContent: 'center',
 		alignItems: 'center'
 	},
 	headerTitle: {
-		fontSize: 25
+		fontSize: 28
 	},
 	headerLink: {
 		position: 'absolute',
@@ -126,6 +140,9 @@ const styles = StyleSheet.create({
 	},
 	headerBtn: {
 		fontSize: 20
+	},
+	noIcon: {
+		marginRight: 10
 	},
 	// Global styles
 	extend: {

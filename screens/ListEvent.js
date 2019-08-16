@@ -11,7 +11,6 @@ export default props => {
 	const [record, setRecord] = useState([]);
 
 	const update = () => {
-		// AsyncStorage.setItem('record', '');
 		AsyncStorage.getItem('record')
 			.then(recordList => {
 				// Get current list of recordings
@@ -79,6 +78,14 @@ export default props => {
 						/>
 					</View>
 					<Text style={[styles.text, styles.headerBtn]}>Add</Text>
+				</TouchableOpacity>
+				<TouchableOpacity
+					style={[styles.headerLink, styles.linkRight, styles.noIcon]}
+					onPress={() => props.navigation.navigate(SCREENS.SET)}
+				>
+					<Text style={[styles.text, styles.headerBtn]}>
+						Settings
+					</Text>
 				</TouchableOpacity>
 			</View>
 			<View style={styles.listWrap}>
