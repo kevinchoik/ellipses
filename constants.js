@@ -1,5 +1,6 @@
 export const SCREENS = {
 	DRAW: 'Draw',
 	LIST: 'List',
-	EVENT: 'Event'
+	EVENT: 'Event',
+	SET: 'Settings'
 };

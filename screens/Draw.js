@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { Icon } from 'react-native-elements';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
 import styles from '../assets/styles';
 import { SCREENS } from '../constants';
 import { MAIN_BLUE } from '../assets/colorScheme';
@@ -30,11 +32,43 @@ export default class Draw extends Component {
 			this.interval = setInterval(() => {
 				if (this.state.timer === 1) {
 					clearInterval(this.interval);
-					// Save the new recording
 					const record = {
 						record: this.state.record,
 						time: this.state.startDate
 					};
+					// Send notification after certain time
+					Permissions.getAsync(Permissions.NOTIFICATIONS)
+						.then(({ status }) => {
+							// Only send notification if permitted
+							if (status === 'granted') {
+								return AsyncStorage.getItem('settings');
+							} else {
+								throw 'Notification permission not granted';
+							}
+						})
+						.then(settings => {
+							settings = JSON.parse(settings);
+							// Only send notification if allowed by user settings
+							if (settings.notif) {
+								Notifications.scheduleLocalNotificationAsync(
+									{
+										title: 'Ellipses',
+										body:
+											'Remember to fill in what you missed!'
+									},
+									{
+										// Number of minutes set by user settings
+										time:
+											Date.now() +
+											Number(settings.notifDelay) *
+												60 *
+												1000
+									}
+								);
+							}
+						})
+						.catch(err => console.log(err));
+					// Save recording
 					AsyncStorage.getItem('record')
 						.then(recordList => {
 							// Get current list of recordings
@@ -152,6 +186,32 @@ export default class Draw extends Component {
 			this.interval = null;
 		}
 		this.props.navigation.navigate(SCREENS.LIST);
+	};
+
+	componentDidMount = () => {
+		// Ask for notification permission
+		Permissions.getAsync(Permissions.NOTIFICATIONS)
+			.then(({ status }) => {
+				if (status !== 'granted') {
+					return Permissions.askAsync(Permissions.NOTIFICATIONS);
+				}
+			})
+			.catch(err => console.log(err));
+		// Set default user setting
+		AsyncStorage.getItem('settings')
+			.then(settings => {
+				if (!settings) {
+					const defaultSettings = {
+						notif: true,
+						notifDelay: 30
+					};
+					return AsyncStorage.setItem(
+						'settings',
+						JSON.stringify(defaultSettings)
+					);
+				}
+			})
+			.catch(err => console.log(err));
 	};
 
 	render() {
