@@ -31,72 +31,7 @@ export default class Draw extends Component {
 		if (!this.interval) {
 			this.interval = setInterval(() => {
 				if (this.state.timer === 1) {
-					clearInterval(this.interval);
-					const record = {
-						record: this.state.record,
-						time: this.state.startDate
-					};
-					// Send notification after certain time
-					Permissions.getAsync(Permissions.NOTIFICATIONS)
-						.then(({ status }) => {
-							// Only send notification if permitted
-							if (status === 'granted') {
-								return AsyncStorage.getItem('settings');
-							} else {
-								throw 'Notification permission not granted';
-							}
-						})
-						.then(settings => {
-							settings = JSON.parse(settings);
-							// Only send notification if allowed by user settings
-							if (settings.notif) {
-								Notifications.scheduleLocalNotificationAsync(
-									{
-										title: 'Ellipses',
-										body:
-											'Remember to fill in what you missed!'
-									},
-									{
-										// Number of minutes set by user settings
-										time:
-											Date.now() +
-											Number(settings.notifDelay) *
-												60 *
-												1000
-									}
-								);
-							}
-						})
-						.catch(err => console.log(err));
-					// Save recording
-					AsyncStorage.getItem('record')
-						.then(recordList => {
-							// Get current list of recordings
-							if (!recordList) {
-								recordList = [];
-							} else {
-								recordList = JSON.parse(recordList);
-							}
-							// Add new recording and save
-							recordList.push(record);
-							return AsyncStorage.setItem(
-								'record',
-								JSON.stringify(recordList)
-							);
-						})
-						// Reset values and navigate to list screen
-						.then(() => {
-							this.setState({
-								points: [],
-								record: [],
-								startTime: 0,
-								startDate: null,
-								timer: 5
-							});
-							this.interval = null;
-							this.props.navigation.navigate(SCREENS.LIST);
-						})
-						.catch(err => console.log(err));
+					this.saveRecord();
 				} else {
 					// Update timer
 					this.setState({
@@ -185,31 +120,96 @@ export default class Draw extends Component {
 			});
 			this.interval = null;
 		}
-		this.props.navigation.navigate(SCREENS.LIST);
+	};
+
+	saveRecord = () => {
+		if (this.interval) {
+			clearInterval(this.interval);
+			const record = {
+				record: this.state.record,
+				time: this.state.startDate
+			};
+			// Send notification after certain time
+			Permissions.getAsync(Permissions.NOTIFICATIONS)
+				.then(({ status }) => {
+					// Only send notification if permitted
+					if (status === 'granted') {
+						return AsyncStorage.getItem('settings');
+					} else {
+						throw 'Notification permission not granted';
+					}
+				})
+				.then(settings => {
+					settings = JSON.parse(settings);
+					// Only send notification if allowed by user settings
+					if (settings.notif) {
+						Notifications.scheduleLocalNotificationAsync(
+							{
+								title: 'Ellipses',
+								body: 'Fill in what you missed!'
+							},
+							{
+								// Number of minutes set by user settings
+								time:
+									Date.now() +
+									Number(settings.notifDelay) * 60 * 1000
+							}
+						);
+					}
+				})
+				.catch(err => console.log(err));
+			// Save recording
+			AsyncStorage.getItem('record')
+				.then(recordList => {
+					// Get current list of recordings
+					if (!recordList) {
+						recordList = [];
+					} else {
+						recordList = JSON.parse(recordList);
+					}
+					// Add new recording and save
+					recordList.push(record);
+					return AsyncStorage.setItem(
+						'record',
+						JSON.stringify(recordList)
+					);
+				})
+				// Reset values and navigate to list screen
+				.then(() => {
+					this.setState({
+						points: [],
+						record: [],
+						startTime: 0,
+						startDate: null,
+						timer: 5
+					});
+					this.interval = null;
+					this.props.navigation.navigate(SCREENS.LIST);
+				})
+				.catch(err => console.log(err));
+		} else {
+			this.props.navigation.navigate(SCREENS.LIST);
+		}
 	};
 
 	componentDidMount = () => {
-		// Ask for notification permission
-		Permissions.getAsync(Permissions.NOTIFICATIONS)
+		Permissions.askAsync(Permissions.NOTIFICATIONS)
 			.then(({ status }) => {
-				if (status !== 'granted') {
-					return Permissions.askAsync(Permissions.NOTIFICATIONS);
-				}
-			})
-			.catch(err => console.log(err));
-		// Set default user setting
-		AsyncStorage.getItem('settings')
-			.then(settings => {
-				if (!settings) {
-					const defaultSettings = {
-						notif: true,
-						notifDelay: 30
-					};
-					return AsyncStorage.setItem(
-						'settings',
-						JSON.stringify(defaultSettings)
-					);
-				}
+				// Set default user setting
+				AsyncStorage.getItem('settings')
+					.then(settings => {
+						if (!settings) {
+							const defaultSettings = {
+								notif: status === 'granted',
+								notifDelay: 30
+							};
+							return AsyncStorage.setItem(
+								'settings',
+								JSON.stringify(defaultSettings)
+							);
+						}
+					})
+					.catch(err => console.log(err));
 			})
 			.catch(err => console.log(err));
 	};
@@ -244,7 +244,7 @@ export default class Draw extends Component {
 						</Text>
 						<TouchableOpacity
 							style={[styles.headerLink, styles.linkRight]}
-							onPress={this.stopRecord}
+							onPress={this.saveRecord}
 						>
 							<Text style={[styles.text, styles.headerBtn]}>
 								View all
@@ -258,6 +258,23 @@ export default class Draw extends Component {
 								/>
 							</View>
 						</TouchableOpacity>
+						{this.interval && (
+							<TouchableOpacity
+								style={[styles.headerLink, styles.linkLeft]}
+								onPress={this.stopRecord}
+							>
+								<View
+									style={[styles.btnLeft, styles.cancelBtn]}
+								>
+									<Icon
+										name="times"
+										type="font-awesome"
+										color={MAIN_BLUE}
+										size={24}
+									/>
+								</View>
+							</TouchableOpacity>
+						)}
 					</View>
 				</SafeAreaView>
 			</View>

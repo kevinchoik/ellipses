@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	settingsPicker: {
-		width: 100
+		width: 50
 	},
 	pickerItem: {
 		height: 120,
@@ -63,7 +63,17 @@ const styles = StyleSheet.create({
 		fontSize: 22
 	},
 	pickerHour: {
-		marginRight: 20
+		width: 60,
+		marginRight: 10
+	},
+	pickerFooter: {
+		flexDirection: 'row',
+		marginVertical: 10
+	},
+	footerBtnWrap: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center'
 	},
 	// Event screen styles
 	eventBackground: {
@@ -97,9 +107,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center'
-	},
-	deleteBtn: {
-		color: EVENT_RED
 	},
 	eventHeader: {
 		position: 'absolute',
@@ -138,6 +145,10 @@ const styles = StyleSheet.create({
 		marginRight: 8,
 		marginLeft: 10
 	},
+	cancelBtn: {
+		width: 40,
+		alignItems: 'center'
+	},
 	headerBtn: {
 		fontSize: 20
 	},
@@ -151,6 +162,9 @@ const styles = StyleSheet.create({
 	text: {
 		color: MAIN_BLUE,
 		fontSize: 18
+	},
+	deleteBtn: {
+		color: EVENT_RED
 	}
 });
 export default styles;
