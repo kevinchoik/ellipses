@@ -111,6 +111,7 @@ export default class Draw extends Component {
 	stopRecord = () => {
 		if (this.interval) {
 			clearInterval(this.interval);
+			this.interval = null;
 			this.setState({
 				points: [],
 				record: [],
@@ -118,78 +119,74 @@ export default class Draw extends Component {
 				startDate: null,
 				timer: 5
 			});
-			this.interval = null;
 		}
+		this.props.navigation.navigate(SCREENS.LIST);
 	};
 
 	saveRecord = () => {
-		if (this.interval) {
-			clearInterval(this.interval);
-			const record = {
-				record: this.state.record,
-				time: this.state.startDate
-			};
-			// Send notification after certain time
-			Permissions.getAsync(Permissions.NOTIFICATIONS)
-				.then(({ status }) => {
-					// Only send notification if permitted
-					if (status === 'granted') {
-						return AsyncStorage.getItem('settings');
-					} else {
-						throw 'Notification permission not granted';
-					}
-				})
-				.then(settings => {
-					settings = JSON.parse(settings);
-					// Only send notification if allowed by user settings
-					if (settings.notif) {
-						Notifications.scheduleLocalNotificationAsync(
-							{
-								title: 'Ellipses',
-								body: 'Fill in what you missed!'
-							},
-							{
-								// Number of minutes set by user settings
-								time:
-									Date.now() +
-									Number(settings.notifDelay) * 60 * 1000
-							}
-						);
-					}
-				})
-				.catch(err => console.log(err));
-			// Save recording
-			AsyncStorage.getItem('record')
-				.then(recordList => {
-					// Get current list of recordings
-					if (!recordList) {
-						recordList = [];
-					} else {
-						recordList = JSON.parse(recordList);
-					}
-					// Add new recording and save
-					recordList.push(record);
-					return AsyncStorage.setItem(
-						'record',
-						JSON.stringify(recordList)
+		clearInterval(this.interval);
+		this.interval = null;
+		const record = {
+			record: this.state.record,
+			time: this.state.startDate
+		};
+		// Send notification after certain time
+		Permissions.getAsync(Permissions.NOTIFICATIONS)
+			.then(({ status }) => {
+				// Only send notification if permitted
+				if (status === 'granted') {
+					return AsyncStorage.getItem('settings');
+				} else {
+					throw 'Notification permission not granted';
+				}
+			})
+			.then(settings => {
+				settings = JSON.parse(settings);
+				// Only send notification if allowed by user settings
+				if (settings.notif) {
+					Notifications.scheduleLocalNotificationAsync(
+						{
+							title: 'Ellipses',
+							body: 'Fill in what you missed!'
+						},
+						{
+							// Number of minutes set by user settings
+							time:
+								Date.now() +
+								Number(settings.notifDelay) * 60 * 1000
+						}
 					);
-				})
-				// Reset values and navigate to list screen
-				.then(() => {
-					this.setState({
-						points: [],
-						record: [],
-						startTime: 0,
-						startDate: null,
-						timer: 5
-					});
-					this.interval = null;
-					this.props.navigation.navigate(SCREENS.LIST);
-				})
-				.catch(err => console.log(err));
-		} else {
-			this.props.navigation.navigate(SCREENS.LIST);
-		}
+				}
+			})
+			.catch(err => console.log(err));
+		// Save recording
+		AsyncStorage.getItem('record')
+			.then(recordList => {
+				// Get current list of recordings
+				if (!recordList) {
+					recordList = [];
+				} else {
+					recordList = JSON.parse(recordList);
+				}
+				// Add new recording and save
+				recordList.push(record);
+				return AsyncStorage.setItem(
+					'record',
+					JSON.stringify(recordList)
+				);
+			})
+			// Reset values and navigate to list screen
+			.then(() => {
+				this.setState({
+					points: [],
+					record: [],
+					startTime: 0,
+					startDate: null,
+					timer: 5
+				});
+				this.props.navigation.navigate(SCREENS.LIST);
+			})
+			.catch(err => console.log(err));
 	};
 
 	componentDidMount = () => {
@@ -244,7 +241,7 @@ export default class Draw extends Component {
 						</Text>
 						<TouchableOpacity
 							style={[styles.headerLink, styles.linkRight]}
-							onPress={this.saveRecord}
+							onPress={this.stopRecord}
 						>
 							<Text style={[styles.text, styles.headerBtn]}>
 								View all
@@ -261,18 +258,19 @@ export default class Draw extends Component {
 						{this.interval && (
 							<TouchableOpacity
 								style={[styles.headerLink, styles.linkLeft]}
-								onPress={this.stopRecord}
+								onPress={this.saveRecord}
 							>
-								<View
-									style={[styles.btnLeft, styles.cancelBtn]}
-								>
+								<View style={styles.btnLeft}>
 									<Icon
-										name="times"
-										type="font-awesome"
+										name="save"
+										type="font-awesome-solid"
 										color={MAIN_BLUE}
-										size={24}
+										size={20}
 									/>
 								</View>
+								<Text style={[styles.text, styles.headerBtn]}>
+									Save
+								</Text>
 							</TouchableOpacity>
 						)}
 					</View>
