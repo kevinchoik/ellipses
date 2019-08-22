@@ -117,6 +117,79 @@ const styles = StyleSheet.create({
 		fontSize: 25,
 		textAlign: 'center'
 	},
+	modalWrap: {
+		position: 'absolute',
+		top: 0,
+		bottom: 0,
+		left: 0,
+		right: 0,
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	modal: {
+		width: '80%',
+		maxHeight: '80%',
+		backgroundColor: MAIN_BLACK,
+		borderRadius: 10,
+		paddingHorizontal: 30,
+		paddingVertical: 20,
+		alignItems: 'center'
+	},
+	modalTitle: {
+		fontSize: 24,
+		marginBottom: 15
+	},
+	modalBody: {
+		marginBottom: 20,
+		width: '100%'
+	},
+	modalList: {
+		flexGrow: 0,
+		flexShrink: 0
+	},
+	modalSpacing: {
+		marginBottom: 10
+	},
+	modalProgress: {
+		flexDirection: 'row',
+		borderRadius: 9,
+		overflow: 'hidden'
+	},
+	progressBar: {
+		height: 18,
+		justifyContent: 'center'
+	},
+	progressDone: {
+		backgroundColor: MAIN_BLUE,
+		paddingRight: 5,
+		alignItems: 'flex-end'
+	},
+	progressLeft: {
+		backgroundColor: MAIN_GREY,
+		paddingLeft: 5
+	},
+	textGrey: {
+		color: MAIN_GREY
+	},
+	modalLabelWrap: {
+		alignItems: 'flex-end'
+	},
+	modalLabelBottom: {
+		flexDirection: 'row'
+	},
+	modalLabel: {
+		fontSize: 12
+	},
+	labelTop: {
+		marginBottom: 3
+	},
+	labelBottom: {
+		marginTop: 3
+	},
+	modalBtn: {
+		fontSize: 20
+	},
 	// Header styles
 	header: {
 		height: 35,
@@ -144,10 +217,6 @@ const styles = StyleSheet.create({
 	btnLeft: {
 		marginRight: 8,
 		marginLeft: 10
-	},
-	cancelBtn: {
-		width: 40,
-		alignItems: 'center'
 	},
 	headerBtn: {
 		fontSize: 20
