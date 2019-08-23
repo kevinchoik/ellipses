@@ -123,7 +123,6 @@ export default props => {
 			filteredEvent.title = event.summary;
 			return filteredEvent;
 		});
-		console.log(events);
 		// Save list of events and trigger modal
 		await setEventList(events);
 		setModal(true);
