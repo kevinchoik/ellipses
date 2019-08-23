@@ -112,8 +112,8 @@ export default props => {
 				// Regular event
 				const startTime = moment(event.start.dateTime);
 				const endTime = moment(event.end.dateTime);
-				filteredEvent.duration = startTime.diff(endTime);
-				filteredEvent.elapsed = timeCreated.diff(startTime);
+				filteredEvent.duration = endTime.diff(startTime, 'minutes');
+				filteredEvent.elapsed = timeCreated.diff(startTime, 'minutes');
 			} else {
 				// All-day event
 				const today = timeCreated.clone().startOf('day');
