@@ -244,7 +244,7 @@ export default class Draw extends Component {
 							onPress={this.stopRecord}
 						>
 							<Text style={[styles.text, styles.headerBtn]}>
-								View all
+								Ellipses
 							</Text>
 							<View style={styles.btnRight}>
 								<Icon

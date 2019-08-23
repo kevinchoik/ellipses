@@ -361,7 +361,7 @@ export default props => {
 						/>
 					</View>
 					<Text style={[styles.text, styles.headerBtn]}>
-						View all
+						Ellipses
 					</Text>
 				</TouchableOpacity>
 				<View style={[styles.headerLink, styles.linkRight]}>
